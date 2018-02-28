@@ -1,9 +1,22 @@
 library(shiny)
-
 library(shinydashboard)
 library(tidyverse)
 library(leaflet)
 
+#Data Read in
+Death15_16 <- read_csv("2015_2016.csv")
+
+# Data Wrangling
+Death15_16$raceethnicity <- as.factor(Death15_16$raceethnicity)
+Death15_16$gender <- as.factor(Death15_16$gender)
+Death15_16$armed <- as.factor(Death15_16$armed)
+Death15_16$age <- as.numeric(Death15_16$age)
+Death15_16$month <- as.factor(Death15_16$month)
+Death15_16$state <- as.factor(Death15_16$state)
+Death15_16$month <- as.factor(Death15_16$month)
+Death15_16$mannerofdeath <- as.factor(Death15_16$mannerofdeath)
+
+#UI
 
 ui <- dashboardPage(
   dashboardHeader(title = "Exploring this Dataset"),
@@ -17,23 +30,30 @@ ui <- dashboardPage(
     tabItems(
       tabItem(tabName = "tab_1",
               fluidRow(
-                box(leafletOutput("us_map", height = 300, width = 700)),
+                box(leafletOutput("us_map")),
                 box(title = "Victim Characteristics", 
                     checkboxGroupInput("race", "Race", 
-                                choices = c("Black", "White", "Latino" 
-                                            )), 
+                                choices = unique(Death15_16$raceethnicity) , 
+                                selected = unique(Death15_16$raceethnicity)
+                                ), 
+                  
                     checkboxGroupInput("gender", "Gender",
-                                choices = c("Male", "Female", "Non-conforming")),
+                                choices = unique(Death15_16$gender),
+                                selected = unique(Death15_16$gender)
+                                ),
+                    
                     sliderInput("age", "Age:", min = 6, max = 87, 
                                 value = c(6, 87)), 
+                    
                     checkboxGroupInput("armed", "Armed", 
-                                       choices = c("Not armed", "Firearm", 
-                                                              "Knife", "Unknown", "Other",
-                                                              "Non-lethal firearm")),
+                                       choices = unique(Death15_16$armed) #,
+                                       #selected = unique(Death15_16$armed)
+                                       ),
+                    
                     checkboxGroupInput("manner", "Manner of Death",
-                                       choices = c("Death in Custody", "Gunshot",
-                                                   "Other", "Struck by Vehicle", 
-                                                   "Taser"))),
+                                       choices = unique(Death15_16$mannerofdeath) #,
+                                       #selected = unique(Death15_16$mannerofdeath))
+                    )),
                 
                 box(title = "Situation Characteristics",
                     checkboxGroupInput("year", "Year", choices = c("2015", "2016")),
@@ -54,18 +74,32 @@ ui <- dashboardPage(
               )) 
     )
   )
-) #everything the audience is going to interact with.
+) 
+#everything the audience is going to interact with.
 
 
 server <- function(input, output){
-  output$my_graph1 <- renderPlot({
-    histogram(faithful$waiting, col = input$color1)
+  output$us_map <- renderLeaflet({
+    
+    DeathMap_df <- Death15_16 %>%
+      filter(raceethnicity %in% input$race) %>% 
+      # filter(age %in% input$age) %>% 
+     # %>% 
+      filter(gender %in% input$gender)
+    # filter choices one line for each
+    
+    leaflet(DeathMap_df) %>% #change Death15_16 here to the newdf
+      addTiles() %>%
+      setView (-84.5555, 42.7325, zoom = 7) %>% 
+      addCircles(~longitude, ~latitude)
+    
   })
   
   output$my_graph2 <- renderPlot({
-    ggplot(faithful, aes(x = waiting, y = eruptions)) + 
-      geom_point(color = input$color2)
+   ggplot(faithful, aes(x = waiting, y = eruptions)) + 
+     geom_point(color = input$color2)
   })
 }
 shinyApp(ui = ui, server = server)
+
 
