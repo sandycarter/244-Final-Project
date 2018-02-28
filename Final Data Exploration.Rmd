@@ -15,6 +15,7 @@ library(tidyverse)
 library(mice)
 library(ggplot2)
 library(VIM)
+library(leaflet)
 
 Death15_16 <- read_csv("2015_2016.csv")
 ```
@@ -78,5 +79,13 @@ colnames(summaryarmed1516) <- c("Armed", "Percent")
 Code to filter by specific settings
 ```{r}
 
+```
+
+
+Leaflet tes
+```{r}
+leaflet(data = Death15_16) %>% 
+  addTiles() %>%
+  addCircles(~longitude, ~latitude)
 ```
 
