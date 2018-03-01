@@ -3,18 +3,21 @@ library(shinydashboard)
 library(tidyverse)
 library(leaflet)
 
+
 #Data Read in
 Death15_16 <- read_csv("2015_2016.csv")
 
 # Data Wrangling
-Death15_16$raceethnicity <- as.factor(Death15_16$raceethnicity)
-Death15_16$gender <- as.factor(Death15_16$gender)
-Death15_16$armed <- as.factor(Death15_16$armed)
-Death15_16$age <- as.numeric(Death15_16$age)
-Death15_16$month <- as.factor(Death15_16$month)
-Death15_16$state <- as.factor(Death15_16$state)
-Death15_16$month <- as.factor(Death15_16$month)
-Death15_16$mannerofdeath <- as.factor(Death15_16$mannerofdeath)
+
+source("Data Wrangling R.R")
+#Death15_16$raceethnicity <- as.factor(Death15_16$raceethnicity)
+#Death15_16$gender <- as.factor(Death15_16$gender)
+#Death15_16$armed <- as.factor(Death15_16$armed)
+#Death15_16$age <- as.numeric(Death15_16$age)
+#Death15_16$month <- as.factor(Death15_16$month)
+#Death15_16$state <- as.factor(Death15_16$state)
+#Death15_16$month <- as.factor(Death15_16$month)
+#Death15_16$mannerofdeath <- as.factor(Death15_16$mannerofdeath)
 
 #UI
 
@@ -30,40 +33,41 @@ ui <- dashboardPage(
     tabItems(
       tabItem(tabName = "tab_1",
               fluidRow(
+                titlePanel("Map of Civilian Deaths Caused by Police"),
                 box(leafletOutput("us_map")),
                 box(title = "Victim Characteristics", 
                     checkboxGroupInput("race", "Race", 
                                 choices = unique(Death15_16$raceethnicity) , 
-                                selected = unique(Death15_16$raceethnicity)
-                                ), 
+                                selected = unique(Death15_16$raceethnicity)), 
                   
                     checkboxGroupInput("gender", "Gender",
                                 choices = unique(Death15_16$gender),
-                                selected = unique(Death15_16$gender)
-                                ),
+                                selected = unique(Death15_16$gender)),
                     
                     sliderInput("age", "Age:", min = 6, max = 87, 
                                 value = c(6, 87)), 
                     
                     checkboxGroupInput("armed", "Armed", 
-                                       choices = unique(Death15_16$armed) #,
-                                       #selected = unique(Death15_16$armed)
+                                       choices = unique(Death15_16$armed),
+                                       selected = unique(Death15_16$armed)
                                        ),
                     
                     checkboxGroupInput("manner", "Manner of Death",
-                                       choices = unique(Death15_16$mannerofdeath) #,
-                                       #selected = unique(Death15_16$mannerofdeath))
-                    )),
+                                       choices = unique(Death15_16$mannerofdeath),
+                                       selected = unique(Death15_16$mannerofdeath))
+                    ),
                 
                 box(title = "Situation Characteristics",
-                    checkboxGroupInput("year", "Year", choices = c("2015", "2016")),
+                    checkboxGroupInput("year", "Year", choices = unique(Death15_16$year), 
+                                       selected = unique(Death15_16$year)),
                     sliderInput("month", "Month of the Year", min = 1,
                                 max = 12, value = c(1,12)),
                     checkboxGroupInput("state", "State", choices = c("CA", "AZ")), 
                     checkboxGroupInput("city", "City", choices = c("Santa Barbara, CA",
-                                                            "Phoenix, AZ"))
-                  )
-              )),
+                                                                   "Phoenix, AZ"))
+                  ),
+                titlePanel("title 2"))
+                ),
       
       tabItem(tabName = "tab_2",
               fluidRow(
@@ -83,10 +87,15 @@ server <- function(input, output){
     
     DeathMap_df <- Death15_16 %>%
       filter(raceethnicity %in% input$race) %>% 
-      # filter(age %in% input$age) %>% 
-     # %>% 
-      filter(gender %in% input$gender)
-    # filter choices one line for each
+      # age  filter(age %in% input$age) %>% 
+      filter(gender %in% input$gender) %>% 
+      filter(armed %in% input$armed) %>% 
+      filter(mannerofdeath %in% input$manner) %>% 
+      filter(age > input$age[1] & age < input$age[2])
+      # filter(month > input$month[1] & month < input$month[2])
+    # month of year (Slider)
+    # state?
+    # city?
     
     leaflet(DeathMap_df) %>% #change Death15_16 here to the newdf
       addTiles() %>%
