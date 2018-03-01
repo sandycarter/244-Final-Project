@@ -3,6 +3,7 @@ library(mice)
 library(ggplot2)
 library(VIM)
 library(leaflet)
+library(scales)
 
 Death15_16 <- read_csv("2015_2016.csv")
 
@@ -48,6 +49,11 @@ colnames(summarymonth1516) <- c("Month", "Percent")
 summaryarmed1516 <- data.frame(table(Death15_16$armed)/length(Death15_16$armed)*100)
 colnames(summaryarmed1516) <- c("Armed", "Percent")
 
+# Maps of Percentages, etc
+#ggplot(summarygender1516, aes(x="", y = Percent, fill=Gender)) +
+ # geom_bar(width=1, stat = "identity") +
+  #coord_polar("y", start = 0) + theme_void()
+  
 
 #Percentages of people killed by gender, race = Filter by raceethnicity / total # rows
 #Counts of people killed. # unique race 

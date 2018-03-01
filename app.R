@@ -32,32 +32,39 @@ ui <- dashboardPage(
   dashboardBody(
     tabItems(
       tabItem(tabName = "tab_1",
+              titlePanel("Title"),
+              fluidRow(box(title = "Map", leafletOutput("us_map"), width = 12)),
               fluidRow(
-                titlePanel("Map of Civilian Deaths Caused by Police"),
-                box(leafletOutput("us_map")),
-                box(title = "Victim Characteristics", 
+                box(title = "Victim Characteristics", width = 9,
+                    column(width = 3,
                     checkboxGroupInput("race", "Race", 
                                 choices = unique(Death15_16$raceethnicity) , 
-                                selected = unique(Death15_16$raceethnicity)), 
-                  
+                                selected = unique(Death15_16$raceethnicity))
+                    ), 
+                    column(width = 3,
                     checkboxGroupInput("gender", "Gender",
                                 choices = unique(Death15_16$gender),
-                                selected = unique(Death15_16$gender)),
+                                selected = unique(Death15_16$gender))
                     
+                    ,
                     sliderInput("age", "Age:", min = 6, max = 87, 
-                                value = c(6, 87)), 
-                    
+                                value = c(6, 87))
+                    )
+                    , 
+                    column(width = 3,
                     checkboxGroupInput("armed", "Armed", 
                                        choices = unique(Death15_16$armed),
-                                       selected = unique(Death15_16$armed)
-                                       ),
-                    
+                                       selected = unique(Death15_16$armed))
+                    ),
+                    column(width = 3,
                     checkboxGroupInput("manner", "Manner of Death",
                                        choices = unique(Death15_16$mannerofdeath),
                                        selected = unique(Death15_16$mannerofdeath))
-                    ),
+                    )
+                    )
+                ,
                 
-                box(title = "Situation Characteristics",
+                box(title = "Situation Characteristics", width =3,
                     checkboxGroupInput("year", "Year", choices = unique(Death15_16$year), 
                                        selected = unique(Death15_16$year)),
                     sliderInput("month", "Month of the Year", min = 1,
@@ -67,6 +74,9 @@ ui <- dashboardPage(
                                                                    "Phoenix, AZ"))
                   ),
                 titlePanel("title 2"))
+              # DEMOGRAPHIC DATA
+              # US DEMOGRAPHIC DATA
+              # DEMOGRAPHIC DATA SPECIFIC TO THE INPUTS. 
                 ),
       
       tabItem(tabName = "tab_2",
@@ -103,11 +113,21 @@ server <- function(input, output){
       addCircles(~longitude, ~latitude)
     
   })
-  
   output$my_graph2 <- renderPlot({
-   ggplot(faithful, aes(x = waiting, y = eruptions)) + 
-     geom_point(color = input$color2)
-  })
+    
+summarygender1516map <-data.frame(table(DeathMap_df$gender)/length(DeathMap_df$gender)*100) 
+colnames(summarygendermap1516) <- c("Gender", "Percent")
+  
+ggplot(summarygendermap1516, aes(x="", y = Percent, fill=Gender)) +
+  geom_bar(width=1, stat = "identity") +
+   coord_polar("y", start = 0) + theme_void()
+  
+  #output$my_graph2 <- renderPlot({
+   #ggplot(faithful, aes(x = waiting, y = eruptions)) + 
+    # geom_point(color = input$color2)
+ })
+    
+  #})
 }
 shinyApp(ui = ui, server = server)
 
