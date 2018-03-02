@@ -72,12 +72,23 @@ ui <- dashboardPage(
                     checkboxGroupInput("state", "State", choices = c("CA", "AZ")), 
                     checkboxGroupInput("city", "City", choices = c("Santa Barbara, CA",
                                                                    "Phoenix, AZ"))
-                  ),
-                titlePanel("title 2")),
-              fluidRow(
-                box(plotOutput("my_graph2"))
-                )
-                
+                  )),
+                titlePanel("Demographics (Based on Inputs Made Above)"),
+               fluidRow(
+                  box(title = "Gender",
+                    plotlyOutput("demGender", height = 250),
+                    verbatimTextOutput("event")
+                    ),
+                  box(title = "Race",
+                      plotlyOutput("demRace", height = 250)
+                      
+                      ),
+                  box(title = "Armed",
+                      plotlyOutput("demArmed", height = 250)),
+                  box(title = "Manner of Death",
+                      plotlyOutput("demManner", height = 250))
+                  )
+              
               # DEMOGRAPHIC DATA
               # US DEMOGRAPHIC DATA
               # DEMOGRAPHIC DATA SPECIFIC TO THE INPUTS. 
@@ -117,31 +128,92 @@ server <- function(input, output){
       addCircles(~longitude, ~latitude)
     
   })
- #output$demGender <- renderPlot({
-  #gender_prop_test <- Death15_16 %>% 
-   # filter(gender %in% input$gender) %>% 
-    #select(gender) %>% 
-    #count(gender) %>% 
-    #mutate(prop = prop.table(n))
   
- # ggplot(gender_prop_test, aes(x="", y=prop, fill =gender)) +
-  #  geom_bar(width = 1, stat = "identity")   
-  
-  #  input$gender == 
-   # DeathGender_df <- Death15_16 %>%
-    #  filter(gender %in% input$gender)
-      #Deathgender15 <-data.frame(table(DeathGender_df$gender)/length(DeathGender_df$gender)*100)
-     # colnames(DeathGender_df) <- c("Gender", "Percent")
+ # output$demGender <- renderPlot({
+  #  DeathGender <- Death15_16 %>%
+   #   filter(gender %in% input$gender) %>% 
+    #  count(gender) %>%            # 
+     # mutate(prop = prop.table(n)) 
+    #as.data.frame(DeathGender) 
     
-   # ggplot(DeathGender_df, aes(x="", y = (table(DeathGender_df$gender)/length(DeathGender_df$gender)), fill=Gender)) +
-    #  geom_bar(width=1, stat = "identity") +
-     # coord_polar("y", start = 0) + theme_void()
- #})
- 
- # output$my_graph2 <- renderPlot({
-  #ggplot(faithful, aes(x = waiting, y = eruptions)) + 
-   #geom_point()
-  #})
+  #  arrange(DeathGender, prop)
+   # DeathGender$label <- paste0(DeathGender$gender, " ", round(DeathGender$prop *100), "%")
+    
+  #  ggplot(DeathGender, aes(x="", y = prop, fill = gender)) + geom_bar(stat = "identity", width = 1) +
+  #   scale_fill_brewer("Blues") +
+   #   coord_polar("y", start = 0) + 
+    #  theme_void() +
+     # geom_text(aes(x = 1, y = cumsum(prop)-prop/2, label = label)) 
+    #ggplot(DeathGender, aes(gender)) + 
+     # stat_count()
+    
+    
+#  })
+  output$demGender <- renderPlotly({
+    
+    DeathGender <- Death15_16 %>%
+      filter(gender %in% input$gender) %>% 
+      count(gender) %>%            # 
+      mutate(prop = prop.table(n)) 
+    as.data.frame(DeathGender) 
+    
+    plot_ly(DeathGender, labels = ~gender, values = ~prop, type = 'pie',
+            textposition = 'auto',
+            textinfo='label+percent',
+            insidetextfont = list(color = '#FFFFFF')) %>%
+    layout(title = "Gender", autosize=TRUE)
+  })
+  
+  output$demRace <- renderPlotly({
+    
+    DeathRace <- Death15_16 %>%
+      filter(raceethnicity %in% input$race) %>% 
+      count(raceethnicity) %>%            # 
+      mutate(prop = prop.table(n)) 
+    as.data.frame(DeathRace) 
+    
+    plot_ly(DeathRace, labels = ~raceethnicity, values = ~prop, type = 'pie',
+            textposition = 'auto',
+            textinfo='label+percent',
+            insidetextfont = list(color = '#FFFFFF')) %>%
+      layout(title = "Race", autosize=TRUE)
+  })
+  
+  output$demArmed <- renderPlotly({
+    
+    DeathArmed <- Death15_16 %>%
+      filter(armed %in% input$armed) %>% 
+      count(armed) %>%            # 
+      mutate(prop = prop.table(n)) 
+    as.data.frame(DeathArmed) 
+    
+    plot_ly(DeathArmed, labels = ~armed, values = ~prop, type = 'pie',
+            textposition = 'auto',
+            textinfo='label+percent',
+            insidetextfont = list(color = '#FFFFFF')) %>%
+      layout(title = "Armed", autosize=TRUE)
+  })
+  
+  output$demManner <- renderPlotly({
+    
+    DeathManner <- Death15_16 %>%
+      filter(mannerofdeath %in% input$manner) %>% 
+      count(mannerofdeath) %>%            # 
+      mutate(prop = prop.table(n)) 
+    as.data.frame(DeathManner) 
+    
+    plot_ly(DeathManner, labels = ~mannerofdeath, values = ~prop, type = 'pie',
+            textposition = 'auto',
+            textinfo='label+percent',
+            insidetextfont = list(color = '#FFFFFF')) %>%
+      layout(title = "Armed", autosize=TRUE)
+  })
+  
+  
+  output$my_graph2 <- renderPlot({
+   ggplot(faithful, aes(x = waiting, y = eruptions)) + 
+     geom_point(color = input$color2)
+ })
 }
 shinyApp(ui = ui, server = server)
 
