@@ -8,16 +8,7 @@ library(leaflet)
 Death15_16 <- read_csv("2015_2016.csv")
 
 # Data Wrangling
-
 source("Data Wrangling R.R")
-#Death15_16$raceethnicity <- as.factor(Death15_16$raceethnicity)
-#Death15_16$gender <- as.factor(Death15_16$gender)
-#Death15_16$armed <- as.factor(Death15_16$armed)
-#Death15_16$age <- as.numeric(Death15_16$age)
-#Death15_16$month <- as.factor(Death15_16$month)
-#Death15_16$state <- as.factor(Death15_16$state)
-#Death15_16$month <- as.factor(Death15_16$month)
-#Death15_16$mannerofdeath <- as.factor(Death15_16$mannerofdeath)
 
 #UI
 
@@ -44,13 +35,10 @@ ui <- dashboardPage(
                     column(width = 3,
                     checkboxGroupInput("gender", "Gender",
                                 choices = unique(Death15_16$gender),
-                                selected = unique(Death15_16$gender))
-                    
-                    ,
+                                selected = unique(Death15_16$gender)),
                     sliderInput("age", "Age:", min = 6, max = 87, 
                                 value = c(6, 87))
-                    )
-                    , 
+                    ), 
                     column(width = 3,
                     checkboxGroupInput("armed", "Armed", 
                                        choices = unique(Death15_16$armed),
@@ -61,8 +49,7 @@ ui <- dashboardPage(
                                        choices = unique(Death15_16$mannerofdeath),
                                        selected = unique(Death15_16$mannerofdeath))
                     )
-                    )
-                ,
+                    ),
                 
                 box(title = "Situation Characteristics", width =3,
                     checkboxGroupInput("year", "Year", choices = unique(Death15_16$year), 
@@ -73,6 +60,7 @@ ui <- dashboardPage(
                     checkboxGroupInput("city", "City", choices = c("Santa Barbara, CA",
                                                                    "Phoenix, AZ"))
                   )),
+              
                 titlePanel("Demographics (Based on Inputs Made Above)"),
                fluidRow(
                   box(title = "Gender",
@@ -81,17 +69,16 @@ ui <- dashboardPage(
                     ),
                   box(title = "Race",
                       plotlyOutput("demRace", height = 250)
-                      
                       ),
                   box(title = "Armed",
                       plotlyOutput("demArmed", height = 250)),
                   box(title = "Manner of Death",
                       plotlyOutput("demManner", height = 250))
-                  )
+                  ),
               
-              # DEMOGRAPHIC DATA
               # US DEMOGRAPHIC DATA
-              # DEMOGRAPHIC DATA SPECIFIC TO THE INPUTS. 
+              titlePanel("US Demograpics (For reference)")
+              
                 ),
       
       tabItem(tabName = "tab_2",
@@ -104,7 +91,7 @@ ui <- dashboardPage(
     )
   )
 ) 
-#everything the audience is going to interact with.
+
 
 
 server <- function(input, output){
@@ -173,7 +160,7 @@ server <- function(input, output){
     as.data.frame(DeathRace) 
     
     plot_ly(DeathRace, labels = ~raceethnicity, values = ~prop, type = 'pie',
-            textposition = 'auto',
+            textposition = 'inside',
             textinfo='label+percent',
             insidetextfont = list(color = '#FFFFFF')) %>%
       layout(title = "Race", autosize=TRUE)
