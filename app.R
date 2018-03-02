@@ -73,7 +73,11 @@ ui <- dashboardPage(
                     checkboxGroupInput("city", "City", choices = c("Santa Barbara, CA",
                                                                    "Phoenix, AZ"))
                   ),
-                titlePanel("title 2"))
+                titlePanel("title 2")),
+              fluidRow(
+                box(plotOutput("my_graph2"))
+                )
+                
               # DEMOGRAPHIC DATA
               # US DEMOGRAPHIC DATA
               # DEMOGRAPHIC DATA SPECIFIC TO THE INPUTS. 
@@ -113,20 +117,30 @@ server <- function(input, output){
       addCircles(~longitude, ~latitude)
     
   })
-  output$my_graph2 <- renderPlot({
-    
-summarygender1516map <-data.frame(table(DeathMap_df$gender)/length(DeathMap_df$gender)*100) 
-colnames(summarygendermap1516) <- c("Gender", "Percent")
+ #output$demGender <- renderPlot({
+  #gender_prop_test <- Death15_16 %>% 
+   # filter(gender %in% input$gender) %>% 
+    #select(gender) %>% 
+    #count(gender) %>% 
+    #mutate(prop = prop.table(n))
   
-ggplot(summarygendermap1516, aes(x="", y = Percent, fill=Gender)) +
-  geom_bar(width=1, stat = "identity") +
-   coord_polar("y", start = 0) + theme_void()
+ # ggplot(gender_prop_test, aes(x="", y=prop, fill =gender)) +
+  #  geom_bar(width = 1, stat = "identity")   
   
-  #output$my_graph2 <- renderPlot({
-   #ggplot(faithful, aes(x = waiting, y = eruptions)) + 
-    # geom_point(color = input$color2)
- })
+  #  input$gender == 
+   # DeathGender_df <- Death15_16 %>%
+    #  filter(gender %in% input$gender)
+      #Deathgender15 <-data.frame(table(DeathGender_df$gender)/length(DeathGender_df$gender)*100)
+     # colnames(DeathGender_df) <- c("Gender", "Percent")
     
+   # ggplot(DeathGender_df, aes(x="", y = (table(DeathGender_df$gender)/length(DeathGender_df$gender)), fill=Gender)) +
+    #  geom_bar(width=1, stat = "identity") +
+     # coord_polar("y", start = 0) + theme_void()
+ #})
+ 
+ # output$my_graph2 <- renderPlot({
+  #ggplot(faithful, aes(x = waiting, y = eruptions)) + 
+   #geom_point()
   #})
 }
 shinyApp(ui = ui, server = server)

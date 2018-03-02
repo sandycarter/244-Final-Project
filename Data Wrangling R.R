@@ -49,6 +49,15 @@ colnames(summarymonth1516) <- c("Month", "Percent")
 summaryarmed1516 <- data.frame(table(Death15_16$armed)/length(Death15_16$armed)*100)
 colnames(summaryarmed1516) <- c("Armed", "Percent")
 
+gender_prop_test <- Death15_16 %>% 
+  select(gender) %>% 
+  count(gender) %>% 
+  mutate(prop = prop.table(n))
+
+ggplot(gender_prop_test, aes(x="", y=prop, fill =gender)) +
+geom_bar(width = 1, stat = "identity") 
+
+
 # Maps of Percentages, etc
 #ggplot(summarygender1516, aes(x="", y = Percent, fill=Gender)) +
  # geom_bar(width=1, stat = "identity") +
