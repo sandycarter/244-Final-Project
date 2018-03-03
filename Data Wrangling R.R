@@ -75,5 +75,3 @@ colnames(summarygender1516) <- c("Gender", "prop")
   #coord_polar("y", start = 0) + 
   #theme_void() +
   #geom_text(aes(x = 1, y = cumsum(prop)-prop/2, label = label), size =3)
-
-

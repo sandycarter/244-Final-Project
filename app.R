@@ -63,18 +63,20 @@ ui <- dashboardPage(
               
                 titlePanel("Demographics (Based on Inputs Made Above)"),
                fluidRow(
-                  box(title = "Gender",
-                    plotlyOutput("demGender", height = 250),
+                 column(6, 
+                        box(title = "Gender", 
+                    plotlyOutput("demGender", height = 200),
                     verbatimTextOutput("event")
                     ),
                   box(title = "Race",
-                      plotlyOutput("demRace", height = 250)
-                      ),
+                      plotlyOutput("demRace", height = 200)
+                      )),
+                 column(6,
                   box(title = "Armed",
-                      plotlyOutput("demArmed", height = 250)),
+                      plotlyOutput("demArmed", height = 200)),
                   box(title = "Manner of Death",
-                      plotlyOutput("demManner", height = 250))
-                  ),
+                      plotlyOutput("demManner", height = 200))
+                  )),
               
               # US DEMOGRAPHIC DATA
               titlePanel("US Demograpics (For reference)")
@@ -98,8 +100,7 @@ server <- function(input, output){
   output$us_map <- renderLeaflet({
     
     DeathMap_df <- Death15_16 %>%
-      filter(raceethnicity %in% input$race) %>% 
-      # age  filter(age %in% input$age) %>% 
+      filter(raceethnicity %in% input$race) %>%
       filter(gender %in% input$gender) %>% 
       filter(armed %in% input$armed) %>% 
       filter(mannerofdeath %in% input$manner) %>% 
@@ -138,62 +139,94 @@ server <- function(input, output){
 #  })
   output$demGender <- renderPlotly({
     
+    m <- list(l = 10, r = 0, t = 0, b = 5)
+    
     DeathGender <- Death15_16 %>%
+      filter(age > input$age[1] & age < input$age[2]) %>% 
       filter(gender %in% input$gender) %>% 
       count(gender) %>%            # 
       mutate(prop = prop.table(n)) 
     as.data.frame(DeathGender) 
     
     plot_ly(DeathGender, labels = ~gender, values = ~prop, type = 'pie',
-            textposition = 'auto',
-            textinfo='label+percent',
-            insidetextfont = list(color = '#FFFFFF')) %>%
-    layout(title = "Gender", autosize=TRUE)
+            textposition = 'inside',
+            textinfo = 'percent',
+            insidetextfont = list(color = '#FFFFFF'),
+            hoverinfo = 'text',
+            text = ~paste(gender, round(prop*100), "%"))    %>%
+    layout(autosize = T,margin = m,
+           xaxis = list(showgrid = FALSE, zeroline = FALSE, showticklabels = FALSE),
+           yaxis = list(showgrid = FALSE, zeroline = FALSE, showticklabels = FALSE)
+           )
   })
   
   output$demRace <- renderPlotly({
     
     DeathRace <- Death15_16 %>%
+      filter(age > input$age[1] & age < input$age[2]) %>% 
       filter(raceethnicity %in% input$race) %>% 
       count(raceethnicity) %>%            # 
       mutate(prop = prop.table(n)) 
     as.data.frame(DeathRace) 
     
-    plot_ly(DeathRace, labels = ~raceethnicity, values = ~prop, type = 'pie',
+    m <- list(l = 10, r = 0, t = 0, b = 5)
+    
+    plot_ly(DeathRace, values = ~prop, type = 'pie', labels = ~raceethnicity,
             textposition = 'inside',
-            textinfo='label+percent',
-            insidetextfont = list(color = '#FFFFFF')) %>%
-      layout(title = "Race", autosize=TRUE)
+            textinfo = 'percent',
+            insidetextfont = list(color = '#FFFFFF'),
+            hoverinfo = 'text',
+            text = ~paste(raceethnicity, round(prop*100), "%")
+            ) %>%
+           
+      layout(autosize = T, margin = m,
+             xaxis = list(showgrid = FALSE, zeroline = FALSE, showticklabels = FALSE),
+             yaxis = list(showgrid = FALSE, zeroline = FALSE, showticklabels = FALSE))
   })
   
   output$demArmed <- renderPlotly({
     
     DeathArmed <- Death15_16 %>%
+      filter(age > input$age[1] & age < input$age[2]) %>% 
       filter(armed %in% input$armed) %>% 
       count(armed) %>%            # 
       mutate(prop = prop.table(n)) 
     as.data.frame(DeathArmed) 
     
+    m <- list(l = 10, r = 0, t = 0, b = 5)
+    
     plot_ly(DeathArmed, labels = ~armed, values = ~prop, type = 'pie',
-            textposition = 'auto',
-            textinfo='label+percent',
-            insidetextfont = list(color = '#FFFFFF')) %>%
-      layout(title = "Armed", autosize=TRUE)
+      textposition = 'inside',
+    textinfo = 'percent',
+    insidetextfont = list(color = '#FFFFFF'),
+    hoverinfo = 'text',
+    text = ~paste(armed, round(prop*100), "%"))    %>%
+ 
+      layout(autosize = T, margin = m,
+             xaxis = list(showgrid = FALSE, zeroline = FALSE, showticklabels = FALSE),
+             yaxis = list(showgrid = FALSE, zeroline = FALSE, showticklabels = FALSE))
   })
   
   output$demManner <- renderPlotly({
     
     DeathManner <- Death15_16 %>%
+      filter(age > input$age[1] & age < input$age[2]) %>% 
       filter(mannerofdeath %in% input$manner) %>% 
       count(mannerofdeath) %>%            # 
       mutate(prop = prop.table(n)) 
     as.data.frame(DeathManner) 
     
+    m <- list(l = 10, r = 0, t = 0, b = 5)
+    
     plot_ly(DeathManner, labels = ~mannerofdeath, values = ~prop, type = 'pie',
-            textposition = 'auto',
-            textinfo='label+percent',
-            insidetextfont = list(color = '#FFFFFF')) %>%
-      layout(title = "Armed", autosize=TRUE)
+            textposition = 'inside',
+            textinfo = 'percent',
+            insidetextfont = list(color = '#FFFFFF'),
+            hoverinfo = 'text',
+            text = ~paste(mannerofdeath, round(prop*100), "%"))  %>%
+      layout(autosize = T, margin = m,
+             xaxis = list(showgrid = FALSE, zeroline = FALSE, showticklabels = FALSE),
+             yaxis = list(showgrid = FALSE, zeroline = FALSE, showticklabels = FALSE))
   })
   
   
