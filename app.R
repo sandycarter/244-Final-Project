@@ -3,9 +3,10 @@ library(shinydashboard)
 library(tidyverse)
 library(leaflet)
 
-
 #Data Read in
 Death15_16 <- read_csv("2015_2016.csv")
+USGender <- read.csv("USGender.csv")
+USRace <- read.csv("USRace.csv")
 
 # Data Wrangling
 source("Data Wrangling R.R")
