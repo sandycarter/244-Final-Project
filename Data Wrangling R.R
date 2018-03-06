@@ -22,7 +22,7 @@ Death15_16$city <- as.factor(Death15_16$city)
 # New variables for month number and season
 Death15_16$monthno <- match(Death15_16$month, month.name)
 
-Death15_16$season <- ifelse(DF$monthno %in% 12 & 1:2, "winter",
-                    ifelse(DF$monthno %in% 3:5, "spring",
-                           ifelse(DF$monthno %in% 6:8, "summer",
-                                  ifelse(DF$monthno %in% 9:11, "fall", "other"))))
+Death15_16$season <- ifelse(Death15_16$monthno %in% 12 & 1:2, "winter",
+                    ifelse(Death15_16$monthno %in% 3:5, "spring",
+                           ifelse(Death15_16$monthno %in% 6:8, "summer",
+                                  ifelse(Death15_16$monthno %in% 9:11, "fall", "other"))))
