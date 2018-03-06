@@ -176,8 +176,8 @@ server <- function(input, output){
             text = ~paste(gender, round(prop*100), "%"))    %>%
     layout(autosize = T,margin = m,
            xaxis = list(showgrid = FALSE, zeroline = FALSE, showticklabels = FALSE),
-           yaxis = list(showgrid = FALSE, zeroline = FALSE, showticklabels = FALSE)
-           )
+           yaxis = list(showgrid = FALSE, zeroline = FALSE, showticklabels = FALSE)) %>%
+    config(displayModeBar = F)
   })
   
   output$demRace <- renderPlotly({
@@ -201,7 +201,8 @@ server <- function(input, output){
            
       layout(autosize = T, margin = m,
              xaxis = list(showgrid = FALSE, zeroline = FALSE, showticklabels = FALSE),
-             yaxis = list(showgrid = FALSE, zeroline = FALSE, showticklabels = FALSE))
+             yaxis = list(showgrid = FALSE, zeroline = FALSE, showticklabels = FALSE))%>% 
+      config(displayModeBar = F)
   })
   
   output$demArmed <- renderPlotly({
@@ -224,7 +225,8 @@ server <- function(input, output){
  
       layout(autosize = T, margin = m,
              xaxis = list(showgrid = FALSE, zeroline = FALSE, showticklabels = FALSE),
-             yaxis = list(showgrid = FALSE, zeroline = FALSE, showticklabels = FALSE))
+             yaxis = list(showgrid = FALSE, zeroline = FALSE, showticklabels = FALSE))%>% 
+      config(displayModeBar = F)
   })
   
   output$demManner <- renderPlotly({
@@ -246,7 +248,8 @@ server <- function(input, output){
             text = ~paste(mannerofdeath, round(prop*100), "%"))  %>%
       layout(autosize = T, margin = m,
              xaxis = list(showgrid = FALSE, zeroline = FALSE, showticklabels = FALSE),
-             yaxis = list(showgrid = FALSE, zeroline = FALSE, showticklabels = FALSE))
+             yaxis = list(showgrid = FALSE, zeroline = FALSE, showticklabels = FALSE))%>% 
+      config(displayModeBar = F)
   })
   
   output$demRaceUS <- renderPlotly({
@@ -261,7 +264,8 @@ server <- function(input, output){
             text = ~paste(Race, round(Prop*100), "%"))  %>%
       layout(autosize = T, margin = m,
              xaxis = list(showgrid = FALSE, zeroline = FALSE, showticklabels = FALSE),
-             yaxis = list(showgrid = FALSE, zeroline = FALSE, showticklabels = FALSE))
+             yaxis = list(showgrid = FALSE, zeroline = FALSE, showticklabels = FALSE)) %>% 
+      config(displayModeBar = F)
   })
   
   
@@ -278,9 +282,8 @@ output$demGenderUS <- renderPlotly({
             text = ~paste(Gender, round(Prop*100), "%"))  %>%
       layout(autosize = T, margin = m,
              xaxis = list(showgrid = FALSE, zeroline = FALSE, showticklabels = FALSE),
-             yaxis = list(showgrid = FALSE, zeroline = FALSE, showticklabels = FALSE),
-             displayModeBar=FALSE
-             )
+             yaxis = list(showgrid = FALSE, zeroline = FALSE, showticklabels = FALSE)) %>% 
+      config(displayModeBar = F)
   })
   
   
