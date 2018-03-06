@@ -8,7 +8,8 @@ library(ggrepel)
 library(plotly)
 
 Death15_16 <- read_csv("2015_2016.csv")
-
+USRace <- read.csv("USRace.csv")
+USGender <- read.csv("USGender.csv")
 # aggr(Death15_16, prop=F, numbers=T) 
 # complete lat long with city, state
 
@@ -51,6 +52,9 @@ colnames(summaryarmed1516) <- c("Armed", "Percent")
 summarygender1516 <-data.frame(table(Death15_16$gender)/length(Death15_16$gender)) 
 colnames(summarygender1516) <- c("Gender", "prop")
 
+
+
+
 #plot_ly(summarygender1516, labels = ~Gender, values = ~prop, type = 'pie',
     #    textposition = 'auto',
    #     insidetextfont = list(color = "#FFFFFF"),
@@ -66,8 +70,6 @@ colnames(summarygender1516) <- c("Gender", "prop")
  #marker = list(colors = c("#556677", "#AA3344", "#772200"),line = list(color = '#FFFFFF', width = 1))) 
 
 
-
-# Maps of Percentages, etc
 
 #label <- paste0(summarygender1516$Gender, " ", round(summarygender1516$prop *100), "%")
 #ggplot(summarygender1516, aes(x="", y = prop, fill=Gender)) +

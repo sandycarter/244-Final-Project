@@ -23,12 +23,12 @@ ui <- dashboardPage(
   dashboardBody(
     tabItems(
       tabItem(tabName = "tab_1",
-              titlePanel("Title"),
-              fluidRow(box(title = "Map", leafletOutput("us_map"), width = 12)),
+              titlePanel("Select Characteristics"),
+              
               fluidRow(
                 box(title = "Victim Characteristics", width = 9,
                     column(width = 3,
-                    checkboxGroupInput("race", "Race", 
+                    checkboxGroupInput("race", "Race/Ethnicity", 
                                 choices = unique(Death15_16$raceethnicity) , 
                                 selected = unique(Death15_16$raceethnicity))
                     ), 
@@ -55,20 +55,24 @@ ui <- dashboardPage(
                     checkboxGroupInput("year", "Year", choices = unique(Death15_16$year), 
                                        selected = unique(Death15_16$year)),
                     sliderInput("month", "Month of the Year", min = 1,
-                                max = 12, value = c(1,12)),
-                    checkboxGroupInput("state", "State", choices = c("CA", "AZ")), 
-                    checkboxGroupInput("city", "City", choices = c("Santa Barbara, CA",
-                                                                   "Phoenix, AZ"))
+                                max = 12, value = c(1,12))
+                   
                   )),
               
-                titlePanel("Demographics (Based on Inputs Made Above)"),
-               fluidRow(
+              titlePanel("Map (Based on Characteristics Selected)"),
+              fluidRow(box(title = "Map", leafletOutput("us_map"), width = 12)),
+            
+              fluidRow(box(width = 12, align = "center",
+                           h3(textOutput("count"))),
+                       
+              titlePanel("Demographics (Based on Characteristics Selected)"),
+              fluidRow(
                  column(6, 
-                        box(title = "Gender", 
+                    box(title = "Gender", 
                     plotlyOutput("demGender", height = 200),
                     verbatimTextOutput("event")
                     ),
-                  box(title = "Race",
+                  box(title = "Race/Ethnicity",
                       plotlyOutput("demRace", height = 200)
                       )),
                  column(6,
@@ -79,9 +83,14 @@ ui <- dashboardPage(
                   )),
               
               # US DEMOGRAPHIC DATA
-              titlePanel("US Demograpics (For reference)")
-              
-                ),
+              titlePanel("US Demographics for Reference"),
+              fluidRow(
+                box(title = "Gender", height = 290,
+                    plotlyOutput("demGenderUS", height = 200)),
+                box(title = "Race/Ethnicity", height = 290,
+                plotlyOutput("demRaceUS", height = 200),
+                p("Hispanic/Latino (of any Race): 17.8%")))
+                )),
       
       tabItem(tabName = "tab_2",
               fluidRow(
@@ -90,9 +99,9 @@ ui <- dashboardPage(
                     radioButtons("color2", "Choose Color:",
                                  choices = c("red", "yellow", "gray")))
               )) 
-    )
+    
   )
-) 
+) )
 
 
 
@@ -106,14 +115,25 @@ server <- function(input, output){
       filter(mannerofdeath %in% input$manner) %>% 
       filter(age > input$age[1] & age < input$age[2])
       # filter(month > input$month[1] & month < input$month[2])
-    # month of year (Slider)
-    # state?
-    # city?
     
     leaflet(DeathMap_df) %>% #change Death15_16 here to the newdf
       addTiles() %>%
-      setView (-84.5555, 42.7325, zoom = 7) %>% 
+      addProviderTiles(providers$OpenStreetMap.BlackAndWhite) %>% 
+      setView (-98.35, 39.50, zoom = 3) %>% 
       addCircles(~longitude, ~latitude)
+    
+  })
+  
+  output$count <- renderText ({
+    DeathMap_count <- Death15_16 %>%
+      filter(raceethnicity %in% input$race) %>%
+      filter(gender %in% input$gender) %>% 
+      filter(armed %in% input$armed) %>% 
+      filter(mannerofdeath %in% input$manner) %>% 
+      filter(age > input$age[1] & age < input$age[2])
+    #month
+    
+     paste("Total Deaths is", nrow(DeathMap_count)) 
     
   })
   
@@ -227,6 +247,40 @@ server <- function(input, output){
       layout(autosize = T, margin = m,
              xaxis = list(showgrid = FALSE, zeroline = FALSE, showticklabels = FALSE),
              yaxis = list(showgrid = FALSE, zeroline = FALSE, showticklabels = FALSE))
+  })
+  
+  output$demRaceUS <- renderPlotly({
+    
+    m <- list(l = 10, r = 0, t = 0, b = 5)
+    
+    plot_ly(USRace, labels = ~Race, values = ~Prop, type = 'pie',
+            textposition = 'inside',
+            textinfo = 'percent',
+            insidetextfont = list(color = '#FFFFFF'),
+            hoverinfo = 'text',
+            text = ~paste(Race, round(Prop*100), "%"))  %>%
+      layout(autosize = T, margin = m,
+             xaxis = list(showgrid = FALSE, zeroline = FALSE, showticklabels = FALSE),
+             yaxis = list(showgrid = FALSE, zeroline = FALSE, showticklabels = FALSE))
+  })
+  
+  
+
+output$demGenderUS <- renderPlotly({
+    
+    m <- list(l = 10, r = 0, t = 0, b = 5)
+    
+    plot_ly(USGender, labels = ~Gender, values = ~Prop, type = 'pie',
+            textposition = 'inside',
+            textinfo = 'percent',
+            insidetextfont = list(color = '#FFFFFF'),
+            hoverinfo = 'text',
+            text = ~paste(Gender, round(Prop*100), "%"))  %>%
+      layout(autosize = T, margin = m,
+             xaxis = list(showgrid = FALSE, zeroline = FALSE, showticklabels = FALSE),
+             yaxis = list(showgrid = FALSE, zeroline = FALSE, showticklabels = FALSE),
+             displayModeBar=FALSE
+             )
   })
   
   
