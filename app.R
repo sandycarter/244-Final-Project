@@ -3,12 +3,7 @@ library(shinydashboard)
 library(tidyverse)
 library(leaflet)
 
-#Data Read in
-Death15_16 <- read_csv("2015_2016.csv")
-USGender <- read.csv("USGender.csv")
-USRace <- read.csv("USRace.csv")
-
-# Data Wrangling
+# Data Read in and Wrangling
 source("Data Wrangling R.R")
 
 #UI
@@ -55,8 +50,9 @@ ui <- dashboardPage(
                 box(title = "Situation Characteristics", width =3,
                     checkboxGroupInput("year", "Year", choices = unique(Death15_16$year), 
                                        selected = unique(Death15_16$year)),
-                    sliderInput("month", "Month of the Year", min = 1,
-                                max = 12, value = c(1,12))
+                    checkboxGroupInput("season", "Season",
+                                       choices = unique(Death15_16$season),
+                                       selected = unique(Death15_16$season))
                    
                   )),
               
@@ -97,6 +93,7 @@ ui <- dashboardPage(
       
       tabItem(tabName = "tab_2",
               titlePanel("Comparisons by City and/or State"),
+              
               fluidRow(
                 box(title = "Choose Cities to Compare:",
                     checkboxGroupInput("cityChoice", "City",
@@ -105,35 +102,46 @@ ui <- dashboardPage(
                 box(title = "Choose Comparison Variable for Cities:",
                     selectInput("variableSelectCity", "Choose Variable:",
                                 choices = c(
-                                  "Race" = 1, "Gender" = 2, 
+                                  "Race" = 1, 
+                                  "Gender" = 2, 
                                   "Armed" = 3, 
                                   "Manner of Death" = 4, 
-                                  "Year" = 5, "Season" = 6
-                                  
-                                )
+                                  "Year" = 5, 
+                                  "Season" = 6)
                                 )
                     )
               ),
+              
               fluidRow(
                 box(title = "City Plot",
-                  plotOutput("my_graph2", height = 500)
-                  ), 
+                  plotOutput("my_graph2", height = 500)), 
             
                 box(title = "City Table",
                   tableOutput("compTablecity"))
               ),
+              
               fluidRow(
-                box(title = "Choose States to Compare:"
-                    
-                )
-              ),
+                box(title = "Choose States to Compare:",
+                    checkboxGroupInput("stateChoice", "State",
+                                       choices = head(Death15_16$state))),
+                box(title = "Choose Comparison Variable for State:",
+                    selectInput("variableSelectCity", "Choose Variable:",
+                                choices = c(
+                                  "Race" = 1, 
+                                  "Gender" = 2, 
+                                  "Armed" = 3, 
+                                  "Manner of Death" = 4, 
+                                  "Year" = 5, 
+                                  "Season" = 6)
+                              )
+                    )
+                ),
+              
               fluidRow(
                 box(title = "State Plot",
-                       plotOutput("my_graph3",height = 500)
-                    ),
+                       plotOutput("my_graph3",height = 500)),
                 box(title = "State Table",
-                    plotOutput("compTableState")
-                )
+                    plotOutput("compTableState"))
               ) 
     
   )
@@ -149,8 +157,9 @@ server <- function(input, output){
       filter(gender %in% input$gender) %>% 
       filter(armed %in% input$armed) %>% 
       filter(mannerofdeath %in% input$manner) %>% 
-      filter(age > input$age[1] & age < input$age[2])
-      # filter(month > input$month[1] & month < input$month[2])
+      filter(age > input$age[1] & age < input$age[2]) %>% 
+      filter(year %in% input$year) %>% 
+      filter(season %in% input$season)
     
     leaflet(DeathMap_df) %>% #change Death15_16 here to the newdf
       addTiles() %>%
@@ -166,40 +175,27 @@ server <- function(input, output){
       filter(gender %in% input$gender) %>% 
       filter(armed %in% input$armed) %>% 
       filter(mannerofdeath %in% input$manner) %>% 
-      filter(age > input$age[1] & age < input$age[2])
-    #month
+      filter(age > input$age[1] & age < input$age[2]) %>% 
+      filter(year %in% input$year) %>% 
+      filter(season %in% input$season)
     
      paste("Total Deaths is", nrow(DeathMap_count)) 
     
   })
   
- # output$demGender <- renderPlot({
-  #  DeathGender <- Death15_16 %>%
-   #   filter(gender %in% input$gender) %>% 
-    #  count(gender) %>%            # 
-     # mutate(prop = prop.table(n)) 
-    #as.data.frame(DeathGender) 
-    
-  #  arrange(DeathGender, prop)
-   # DeathGender$label <- paste0(DeathGender$gender, " ", round(DeathGender$prop *100), "%")
-    
-  #  ggplot(DeathGender, aes(x="", y = prop, fill = gender)) + geom_bar(stat = "identity", width = 1) +
-  #   scale_fill_brewer("Blues") +
-   #   coord_polar("y", start = 0) + 
-    #  theme_void() +
-     # geom_text(aes(x = 1, y = cumsum(prop)-prop/2, label = label)) 
-    #ggplot(DeathGender, aes(gender)) + 
-     # stat_count()
-    
-    
-#  })
   output$demGender <- renderPlotly({
     
     m <- list(l = 10, r = 0, t = 0, b = 5)
     
     DeathGender <- Death15_16 %>%
       filter(age > input$age[1] & age < input$age[2]) %>% 
+      filter(raceethnicity %in% input$race) %>%
       filter(gender %in% input$gender) %>% 
+      filter(armed %in% input$armed) %>% 
+      filter(mannerofdeath %in% input$manner) %>% 
+      filter(age > input$age[1] & age < input$age[2]) %>% 
+      filter(year %in% input$year) %>% 
+      filter(season %in% input$season) %>% 
       count(gender) %>%            # 
       mutate(prop = prop.table(n)) 
     as.data.frame(DeathGender) 
@@ -220,9 +216,16 @@ server <- function(input, output){
     
     DeathRace <- Death15_16 %>%
       filter(age > input$age[1] & age < input$age[2]) %>% 
-      filter(raceethnicity %in% input$race) %>% 
+      filter(raceethnicity %in% input$race) %>%
+      filter(gender %in% input$gender) %>% 
+      filter(armed %in% input$armed) %>% 
+      filter(mannerofdeath %in% input$manner) %>% 
+      filter(age > input$age[1] & age < input$age[2]) %>% 
+      filter(year %in% input$year) %>% 
+      filter(season %in% input$season) %>% 
       count(raceethnicity) %>%            # 
       mutate(prop = prop.table(n)) 
+    
     as.data.frame(DeathRace) 
     
     m <- list(l = 10, r = 0, t = 0, b = 5)
@@ -245,7 +248,13 @@ server <- function(input, output){
     
     DeathArmed <- Death15_16 %>%
       filter(age > input$age[1] & age < input$age[2]) %>% 
+      filter(raceethnicity %in% input$race) %>%
+      filter(gender %in% input$gender) %>% 
       filter(armed %in% input$armed) %>% 
+      filter(mannerofdeath %in% input$manner) %>% 
+      filter(age > input$age[1] & age < input$age[2]) %>% 
+      filter(year %in% input$year) %>% 
+      filter(season %in% input$season)%>% 
       count(armed) %>%            # 
       mutate(prop = prop.table(n)) 
     as.data.frame(DeathArmed) 
@@ -269,9 +278,16 @@ server <- function(input, output){
     
     DeathManner <- Death15_16 %>%
       filter(age > input$age[1] & age < input$age[2]) %>% 
+      filter(raceethnicity %in% input$race) %>%
+      filter(gender %in% input$gender) %>% 
+      filter(armed %in% input$armed) %>% 
       filter(mannerofdeath %in% input$manner) %>% 
-      count(mannerofdeath) %>%            # 
+      filter(age > input$age[1] & age < input$age[2]) %>% 
+      filter(year %in% input$year) %>% 
+      filter(season %in% input$season) %>% 
+      count(mannerofdeath) %>%            
       mutate(prop = prop.table(n)) 
+    
     as.data.frame(DeathManner) 
     
     m <- list(l = 10, r = 0, t = 0, b = 5)
@@ -324,8 +340,11 @@ output$demGenderUS <- renderPlotly({
   
   
   output$my_graph2 <- renderPlot({
-   ggplot(faithful, aes(x = waiting, y = eruptions)) + 
-     geom_point(color = input$color2)
+   ggplot(Death15_16, alpha = 0.2,
+          aes(x = input$variableSelectCity, 
+              group = input$variableSelectCity,
+              fill= input$variableSelectCity)) + 
+     geom_bar(position = "fill")
  })
 }
 shinyApp(ui = ui, server = server)
