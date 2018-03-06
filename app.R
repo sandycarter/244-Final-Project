@@ -93,16 +93,51 @@ ui <- dashboardPage(
                 p("Hispanic/Latino (of any Race): 17.8%")))
                 )),
       
+      
+      
       tabItem(tabName = "tab_2",
+              titlePanel("Comparisons by City and/or State"),
               fluidRow(
-                box(plotOutput("my_graph2", height = 500)), 
-                box(title = "Choose Color:", 
-                    radioButtons("color2", "Choose Color:",
-                                 choices = c("red", "yellow", "gray")))
-              )) 
+                box(title = "Choose Cities to Compare:",
+                    checkboxGroupInput("cityChoice", "City",
+                                       choices = head(Death15_16$city))
+                    ),
+                box(title = "Choose Comparison Variable for Cities:",
+                    selectInput("variableSelectCity", "Choose Variable:",
+                                choices = c(
+                                  "Race" = 1, "Gender" = 2, 
+                                  "Armed" = 3, 
+                                  "Manner of Death" = 4, 
+                                  "Year" = 5, "Season" = 6
+                                  
+                                )
+                                )
+                    )
+              ),
+              fluidRow(
+                box(title = "City Plot",
+                  plotOutput("my_graph2", height = 500)
+                  ), 
+            
+                box(title = "City Table",
+                  tableOutput("compTablecity"))
+              ),
+              fluidRow(
+                box(title = "Choose States to Compare:"
+                    
+                )
+              ),
+              fluidRow(
+                box(title = "State Plot",
+                       plotOutput("my_graph3",height = 500)
+                    ),
+                box(title = "State Table",
+                    plotOutput("compTableState")
+                )
+              ) 
     
   )
-) )
+) ) )
 
 
 
