@@ -161,12 +161,18 @@ server <- function(input, output){
       filter(year %in% input$year) %>% 
       filter(season %in% input$season)
     
+    pal <- colorFactor(c("brown", "red", "red", "green", "yellow", "purple", "purple", "blue"), domain = c("Arab-American","Asian/Pacific Islander","Black", "Hispanic/Latino","Native American","Other","Unknown","White"))
+    
     leaflet(DeathMap_df) %>% #change Death15_16 here to the newdf
       addTiles() %>%
       addProviderTiles(providers$OpenStreetMap.BlackAndWhite) %>% 
       setView (-98.35, 39.50, zoom = 3) %>% 
-      addCircles(~longitude, ~latitude, popup = ~paste(name, ",", raceethnicity, ",", age, ",", gender))
-    
+      addCircles(~longitude, ~latitude, 
+                 color = ~pal(raceethnicity), 
+                 popup = ~paste(name, ",", raceethnicity, ",", age, ",", gender)) %>% 
+      addLegend("bottomright", pal = pal, values = ~raceethnicity,
+                title = "Race/Ethnicity",
+                opacity = 1)
     
   })
   
