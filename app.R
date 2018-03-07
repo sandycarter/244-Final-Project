@@ -161,7 +161,7 @@ server <- function(input, output){
       filter(year %in% input$year) %>% 
       filter(season %in% input$season)
     
-    pal <- colorFactor(c("brown", "red", "red", "green", "yellow", "purple", "purple", "blue"), domain = c("Arab-American","Asian/Pacific Islander","Black", "Hispanic/Latino","Native American","Other","Unknown","White"))
+    pal <- colorFactor(c("brown", "red", "orange", "green", "yellow", "purple", "purple", "blue"), domain = c("Arab-American","Asian/Pacific Islander","Black", "Hispanic/Latino","Native American","Other","Unknown","White"))
     
     leaflet(DeathMap_df) %>% #change Death15_16 here to the newdf
       addTiles() %>%
