@@ -30,3 +30,6 @@ Death15_16$season <- ifelse(Death15_16$monthno %in% 12 & 1:2, "Winter",
                                   ifelse(Death15_16$monthno %in% 9:11, "Fall", "Other")))))
 
 Death15_16$season <- as.factor(Death15_16$season)
+
+Encoding(Death15_16$name) <- "UTF-8"
+

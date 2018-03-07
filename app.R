@@ -165,7 +165,8 @@ server <- function(input, output){
       addTiles() %>%
       addProviderTiles(providers$OpenStreetMap.BlackAndWhite) %>% 
       setView (-98.35, 39.50, zoom = 3) %>% 
-      addCircles(~longitude, ~latitude)
+      addCircles(~longitude, ~latitude, popup = ~paste(name, ",", raceethnicity, ",", age, ",", gender))
+    
     
   })
   
