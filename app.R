@@ -13,7 +13,8 @@ ui <- dashboardPage(
   dashboardSidebar(
     sidebarMenu(
       menuItem("Map of the United States", tabName = "tab_1"),
-      menuItem("City Profile", tabName = "tab_2")
+      menuItem("Compare Cities and States", tabName = "tab_2"), 
+      menuItem("About this Dataset", tabName = "tab_3")
     )#tab names that will show up, defining them for R as "tab_1" etc.
   ),
   dashboardBody(
@@ -92,59 +93,70 @@ ui <- dashboardPage(
       
       
       tabItem(tabName = "tab_2",
-              titlePanel("Comparisons by City and/or State"),
+              titlePanel("Comparisons by City and State"),
               
               fluidRow(
                 box(title = "Choose Cities to Compare:",
                     checkboxGroupInput("cityChoice", "City",
-                                       choices = head(Death15_16$city))
+                                       choices = unique(citysort10$city), 
+                                       select = "Los Angeles")
                     ),
                 box(title = "Choose Comparison Variable for Cities:",
                     selectInput("variableSelectCity", "Choose Variable:",
-                                choices = c(
-                                  "Race" = 1, 
-                                  "Gender" = 2, 
-                                  "Armed" = 3, 
-                                  "Manner of Death" = 4, 
-                                  "Year" = 5, 
-                                  "Season" = 6)
-                                )
+                                choices = c("Race" = "raceethnicity",
+                                            "Gender" = "gender",
+                                            "Manner of Death" = "mannerofdeath",
+                                            "Armed" = "armed", 
+                                            "Year" = "year", 
+                                            "Season" = "season")
+                                ),
+                    hr()
                     )
               ),
               
               fluidRow(
                 box(title = "City Plot",
-                  plotOutput("my_graph2", height = 500)), 
+                  plotOutput("my_graph2")) 
+                , 
             
                 box(title = "City Table",
-                  tableOutput("compTablecity"))
+                tableOutput("my_table2"))
               ),
+              
               
               fluidRow(
                 box(title = "Choose States to Compare:",
                     checkboxGroupInput("stateChoice", "State",
-                                       choices = head(Death15_16$state))),
-                box(title = "Choose Comparison Variable for State:",
-                    selectInput("variableSelectCity", "Choose Variable:",
-                                choices = c(
-                                  "Race" = 1, 
-                                  "Gender" = 2, 
-                                  "Armed" = 3, 
-                                  "Manner of Death" = 4, 
-                                  "Year" = 5, 
-                                  "Season" = 6)
-                              )
-                    )
+                                       choices = unique(statesort10$state), 
+                                       select = "CA")
                 ),
+                box(title = "Choose Comparison Variable for States:",
+                    selectInput("variableSelectState", "Choose Variable:",
+                                choices = c("Race" = "raceethnicity",
+                                            "Gender" = "gender",
+                                            "Manner of Death" = "mannerofdeath",
+                                            "Armed" = "armed", 
+                                            "Year" = "year", 
+                                            "Season" = "season")
+                    ),
+                    hr()
+                )
+              ),
+              
               
               fluidRow(
                 box(title = "State Plot",
-                       plotOutput("my_graph3",height = 500)),
+                       plotOutput("my_graph3")),
                 box(title = "State Table",
-                    plotOutput("compTableState"))
-              ) 
+                    plotOutput("my_table3"))
+              )), 
     
-  )
+  
+  tabItem(tabName = "tab_3",
+          titlePanel(""),
+          fluidRow(includeMarkdown("include.Rmd")
+            
+          ))
 ) ) )
 
 
@@ -347,12 +359,77 @@ output$demGenderUS <- renderPlotly({
   
   
   output$my_graph2 <- renderPlot({
-   ggplot(Death15_16, alpha = 0.2,
-          aes(x = input$variableSelectCity, 
-              group = input$variableSelectCity,
-              fill= input$variableSelectCity)) + 
-     geom_bar(position = "fill")
+    DF_cc <- Death15_16 %>% filter(city %in% input$cityChoice)
+    
+    variable <- switch(input$variableSelectCity, 
+                       armed = DF_cc$armed,
+                       raceethnicity = DF_cc$raceethnicity, 
+                       gender = DF_cc$gender, 
+                       season = DF_cc$season, 
+                       year = DF_cc$year, 
+                       mannerofdeath = DF_cc$mannerofdeath) 
+    
+    
+    ggplot(DF_cc, alpha = 0.2,
+          aes(x = city, 
+             group = variable,
+            fill = variable)) + 
+     geom_bar(position = "fill") +
+     theme_classic()+
+      scale_y_continuous(expand = c(0,0)) +
+      xlab("City") +
+      ylab("Proportion of City Total")
  })
+  
+  output$my_graph3 <- renderPlot({
+    DF_sc <- Death15_16 %>% filter(state %in% input$stateChoice)
+    
+    variable <- switch(input$variableSelectState, 
+                       armed = DF_sc$armed,
+                       raceethnicity = DF_sc$raceethnicity, 
+                       gender = DF_sc$gender, 
+                       season = DF_sc$season, 
+                       year = DF_sc$year, 
+                       mannerofdeath = DF_sc$mannerofdeath) 
+    
+    
+    ggplot(DF_sc, alpha = 0.2,
+           aes(x = state, 
+               group = variable,
+               fill = variable)) + 
+      geom_bar(position = "fill") +
+      theme_classic()+
+      scale_y_continuous(expand = c(0,0)) +
+      xlab("State") +
+      ylab("Proportion of State Total")
+  })
+  
+  #output$my_table2 <- renderText ({
+   # DF_tb <- Death15_16 %>%
+    #  filter(city %in% input$cityChoice) 
+    
+    #variabletb2 <- switch(input$variableSelectCity, 
+     #                     armed = DF_tb$armed,
+      #                    raceethnicity = DF_tb$raceethnicity, 
+       #                   gender = DF_tb$gender, 
+        ##                 year = DF_tb$year, 
+          #                mannerofdeath = DF_tb$mannerofdeath)
+    
+ #   paste("you chose", variabletb2)
+    
+#  })
+  
+  
+  #output$my_table2 <- renderTable({
+  # DF_tb <- Death15_16 %>% filter(city %in% input$cityChoice)
+    
+    
+    
+    #A <- count(DF_tb, variabletb2, state)
+    #A2 <- arrange(A, state)
+
+   
+ # })
 }
 shinyApp(ui = ui, server = server)
 

@@ -33,3 +33,16 @@ Death15_16$season <- as.factor(Death15_16$season)
 
 Encoding(Death15_16$name) <- "UTF-8"
 
+
+# New dataframe with top 10 cities
+Death15_16$deaths <- rep(1,2226)
+cityag <- aggregate(deaths ~ city, data = Death15_16, FUN = sum)
+citysort <- arrange(cityag, -deaths)
+citysort
+citysort10 <- head(citysort, 10)
+citysort10
+
+# New dataframe with top 10 states
+stateag <- aggregate(deaths ~ state, data = Death15_16, FUN = sum)
+statesort <- arrange(stateag, -deaths)
+statesort10 <- head(statesort, 10)
