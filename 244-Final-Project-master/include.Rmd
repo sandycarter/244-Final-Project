@@ -1,0 +1,38 @@
+---
+title: "include"
+author: "Danielle Bovenberg"
+date: "7 March 2018"
+output: html_document
+---
+
+##  The Counted
+Data for this app were retrieved from a dataset known as *The Counted*. The Counted is a project by British newspaper The Guardian, with the stated aim to "count the number of people killed by police and other law enforcement agencies in the United States throughout 2015 and 2016, to monitor their demographics and to tell the stories of how they died."
+
+The data collection project was started amidst the debates set in motion in 2014 by the fatal police shooting of Michael Brown. Given the fact that the United States government does not keep a comprehensive record of the number of people killed by law enforcement, the Guardian writes on its website that "such accounting is a prerequisite for an informed public discussion about the use of force by police".
+
+Data on the deaths included in the dataset come from two sources: 
+
+1. Reporting by Guardian journalists
+
+2. Verified crowdsourced information
+
+According to the website of the project, "The Counted is the most thorough public accounting for deadly use of force in the US, but it will operate as an imperfect work in progress – and will be updated by Guardian reporters and interactive journalists frequently." 
+
+The database itself, as well as trends that can be distilled from it, have been reported on by various U.S. and international news outlets. 
+
+
+## Further Reading
+*The Guardian*: 
+- https://www.theguardian.com/us-news/series/counted-us-police-killings
+
+*National Public Radio (All Things Considered)*: 
+- https://www.npr.org/2015/06/05/412305542/guardian-database-highlights-underreporting-of-people-killed-by-police
+
+*Dallas Morning News*:
+- https://www.dallasnews.com/news/news/2015/06/02/ragland-a-new-era-of-police-accountability-is-all-for-the-public-good
+
+*Houston Chronicle*:
+- https://www.chron.com/news/houston-texas/houston/article/Dozens-killed-by-police-in-three-Texas-counties-6683077.php
+
+## Source of Dataset
+https://www.kaggle.com/the-guardian/the-counted
