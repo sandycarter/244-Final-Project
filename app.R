@@ -12,7 +12,7 @@ ui <- dashboardPage(
   dashboardHeader(title = "Exploring this Dataset"),
   dashboardSidebar(
     sidebarMenu(
-      menuItem("Map of the United States", tabName = "tab_1"),
+      menuItem("See Data for the Entire US", tabName = "tab_1"),
       menuItem("Compare Cities and States", tabName = "tab_2"), 
       menuItem("About this Dataset", tabName = "tab_3")
     )#tab names that will show up, defining them for R as "tab_1" etc.
@@ -117,10 +117,10 @@ ui <- dashboardPage(
               fluidRow(
                 box(title = "City Plot",
                   plotOutput("my_graph2")) 
-                , 
+                
             
-                box(title = "City Table",
-                tableOutput("my_table2"))
+            #    box(title = "City Table",
+             #   tableOutput("my_table2"))
               ),
               
               
@@ -146,15 +146,16 @@ ui <- dashboardPage(
               
               fluidRow(
                 box(title = "State Plot",
-                       plotOutput("my_graph3")),
-                box(title = "State Table",
-                    plotOutput("my_table3"))
+                       plotOutput("my_graph3"))
+            #    box(title = "State Table",
+             #       plotOutput("my_table3"))
               )), 
     
   
   tabItem(tabName = "tab_3",
           titlePanel(""),
-          fluidRow(includeMarkdown("include.Rmd")
+          fluidRow(
+            column(width = 12,includeMarkdown("include.Rmd"))
             
           ))
 ) ) )
