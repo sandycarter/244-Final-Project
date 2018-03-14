@@ -19,6 +19,7 @@ Death15_16$age <- as.numeric(Death15_16$age)
 Death15_16$state <- as.factor(Death15_16$state)
 Death15_16$mannerofdeath <- as.factor(Death15_16$mannerofdeath)
 Death15_16$city <- as.factor(Death15_16$city)
+Death15_16$year <- as.factor(Death15_16$year)
 
 # New variables for month number and season
 Death15_16$monthno <- match(Death15_16$month, month.name)

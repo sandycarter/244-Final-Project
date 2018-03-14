@@ -9,18 +9,18 @@ source("Data Wrangling R.R")
 #UI
 
 ui <- dashboardPage(
-  dashboardHeader(title = "Exploring this Dataset"),
+  dashboardHeader(title = "Citizen Fatalities Due to Police Action in the United States, 2015-2016", titleWidth = 660),
   dashboardSidebar(
     sidebarMenu(
-      menuItem("See Data for the Entire US", tabName = "tab_1"),
+      menuItem("Map Data for the Entire US", tabName = "tab_1"),
       menuItem("Compare Cities and States", tabName = "tab_2"), 
-      menuItem("About this Dataset", tabName = "tab_3")
+      menuItem("About", tabName = "tab_3")
     )#tab names that will show up, defining them for R as "tab_1" etc.
   ),
   dashboardBody(
     tabItems(
       tabItem(tabName = "tab_1",
-              titlePanel("Select Characteristics"),
+              titlePanel("Filter Incidents"),
               
               fluidRow(
                 box(title = "Victim Characteristics", width = 9,
@@ -57,13 +57,13 @@ ui <- dashboardPage(
                    
                   )),
               
-              titlePanel("Map (Based on Characteristics Selected)"),
-              fluidRow(box(title = "Map", leafletOutput("us_map"), width = 12)),
+              titlePanel("Map"),
+              fluidRow(box(leafletOutput("us_map"), width = 12)),
             
               fluidRow(box(width = 12, align = "center",
                            h3(textOutput("count"))),
                        
-              titlePanel("Demographics (Based on Characteristics Selected)"),
+              titlePanel(" Demographics"),
               fluidRow(
                  column(6, 
                     box(title = "Gender", 
@@ -81,7 +81,7 @@ ui <- dashboardPage(
                   )),
               
               # US DEMOGRAPHIC DATA
-              titlePanel("US Demographics for Reference"),
+              titlePanel(" US Demographics for Reference"),
               fluidRow(
                 box(title = "Gender", height = 290,
                     plotlyOutput("demGenderUS", height = 200)),
@@ -97,55 +97,52 @@ ui <- dashboardPage(
               
               fluidRow(
                 box(title = "Choose Cities to Compare:",
-                    checkboxGroupInput("cityChoice", "City",
+                    checkboxGroupInput("cityChoice", "", inline = TRUE,
                                        choices = unique(citysort10$city), 
                                        select = "Los Angeles")
                     ),
                 box(title = "Choose Comparison Variable for Cities:",
-                    selectInput("variableSelectCity", "Choose Variable:",
+                    selectInput("variableSelectCity", "",
                                 choices = c("Race" = "raceethnicity",
                                             "Gender" = "gender",
                                             "Manner of Death" = "mannerofdeath",
                                             "Armed" = "armed", 
                                             "Year" = "year", 
                                             "Season" = "season")
-                                ),
-                    hr()
+                                )
                     )
               ),
               
               fluidRow(
-                box(title = "City Plot",
+                box(width = 12, title = "City Plot",
                   plotOutput("my_graph2")) 
-                
             
             #    box(title = "City Table",
              #   tableOutput("my_table2"))
               ),
-              
+            hr(),
               
               fluidRow(
-                box(title = "Choose States to Compare:",
-                    checkboxGroupInput("stateChoice", "State",
+               box(title = "Choose States to Compare:", 
+                   checkboxGroupInput("stateChoice", "", inline = TRUE,
                                        choices = unique(statesort10$state), 
                                        select = "CA")
                 ),
-                box(title = "Choose Comparison Variable for States:",
-                    selectInput("variableSelectState", "Choose Variable:",
+                box(title = "Choose Comparison Variable for States:", 
+                    selectInput("variableSelectState", "",
                                 choices = c("Race" = "raceethnicity",
                                             "Gender" = "gender",
                                             "Manner of Death" = "mannerofdeath",
                                             "Armed" = "armed", 
                                             "Year" = "year", 
                                             "Season" = "season")
-                    ),
-                    hr()
+                    )
                 )
               ),
               
               
               fluidRow(
-                box(title = "State Plot",
+                box(width = 12, title = "State Plot",
                        plotOutput("my_graph3"))
             #    box(title = "State Table",
              #       plotOutput("my_table3"))
@@ -153,7 +150,6 @@ ui <- dashboardPage(
     
   
   tabItem(tabName = "tab_3",
-          titlePanel(""),
           fluidRow(
             column(width = 12,includeMarkdown("include.Rmd"))
             
@@ -379,7 +375,10 @@ output$demGenderUS <- renderPlotly({
      theme_classic()+
       scale_y_continuous(expand = c(0,0)) +
       xlab("City") +
-      ylab("Proportion of City Total")
+      ylab("Proportion of City Total")+
+      theme(text=element_text(size=14))+
+      scale_fill_brewer(palette = "Spectral")
+    
  })
   
   output$my_graph3 <- renderPlot({
@@ -402,7 +401,9 @@ output$demGenderUS <- renderPlotly({
       theme_classic()+
       scale_y_continuous(expand = c(0,0)) +
       xlab("State") +
-      ylab("Proportion of State Total")
+      ylab("Proportion of State Total") +
+      theme(text=element_text(size=14)) +
+      scale_fill_brewer(palette = "Spectral")
   })
   
   #output$my_table2 <- renderText ({

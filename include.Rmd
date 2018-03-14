@@ -4,8 +4,13 @@ author: "Danielle Bovenberg"
 date: "7 March 2018"
 output: html_document
 ---
+## This Application
 
-##  The Counted
+This application allows user to interact with data on civilian fatalities resulting from interactions with police in the United States in 2015 and 2016. Through selecting victim or situational characteristics, users can get a visual sense of the prevalence of incidents across demographic groups, cities, and states. 
+
+This Shiny App was created by Danielle Bovenberg and Sandy Carter, graduate students at the University of California Santa Barbara, as part of coursework in statistics in Winter 2018. 
+
+## The Counted Dataset
 Data for this app were retrieved from a dataset known as *The Counted*. The Counted is a project by British newspaper The Guardian, with the stated aim to "count the number of people killed by police and other law enforcement agencies in the United States throughout 2015 and 2016, to monitor their demographics and to tell the stories of how they died."
 
 The data collection project was started amidst the debates set in motion in 2014 by the fatal police shooting of Michael Brown. Given the fact that the United States government does not keep a comprehensive record of the number of people killed by law enforcement, the Guardian writes on its website that "such accounting is a prerequisite for an informed public discussion about the use of force by police".
@@ -37,5 +42,3 @@ The database itself, as well as trends that can be distilled from it, have been 
 ## Source of Dataset
 https://www.kaggle.com/the-guardian/the-counted
 
-## App Creators
-This Shiny App was created by Danielle Bovenberg and Sandy Carter, graduate students at the University of California Santa Barbara, as part of coursework in statistics. 
